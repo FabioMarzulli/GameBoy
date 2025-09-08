@@ -3,59 +3,128 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>GameBoy Camera Web+</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Game Boy Camera</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <h1>📸 GameBoy Camera Web+</h1>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📷 Game Boy Camera</h1>
+        </div>
 
-    <div id="video-container">
-        <video id="video" autoplay playsinline></video>
-        <canvas id="canvas"></canvas>
-    </div>
+        <!-- Camera View -->
+        <div id="cameraView" class="view-container active">
+            <div class="camera-wrapper">
+                <video id="video" autoplay playsinline></video>
+                <canvas id="liveCanvas"></canvas>
+            </div>
 
-    <div class="controls">
-        <button id="capture">📷 Scatta</button>
-        <button id="save">💾 Salva</button>
-        <button id="switchCamera">🔄 Switch</button>
-        <input type="file" id="upload" accept="image/*">
+            <!-- Controls -->
+            <div class="controls">
+                <!-- Camera Controls -->
+                <div class="camera-controls">
+                    <button id="galleryBtn" class="btn-icon" title="Galleria">
+                        <span>🖼️</span>
+                        <input type="file" id="uploadInput" accept="image/*" hidden>
+                    </button>
+                    <button id="captureBtn" class="btn-capture">
+                        <span class="capture-icon"></span>
+                    </button>
+                    <button id="switchBtn" class="btn-icon" title="Cambia Camera">
+                        <span>🔄</span>
+                    </button>
+                </div>
 
-        <label>Palette:
-      <select id="palette"></select>
-    </label>
+                <!-- Settings Panel -->
+                <div class="settings-panel">
+                    <!-- Color Palette -->
+                    <div class="setting-group">
+                        <label>Palette Colori</label>
+                        <div class="palette-grid" id="paletteGrid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
 
-        <label>Pixel scale
-      <input type="range" id="pixelScale" min="2" max="12" value="4">
-    </label>
+                    <!-- Resolution -->
+                    <div class="setting-group">
+                        <label>Risoluzione</label>
+                        <select id="resolution" class="select-input">
+                            <option value="160x144">160×144 (Original)</option>
+                            <option value="128x112">128×112 (Pocket)</option>
+                            <option value="256x224">256×224 (Super)</option>
+                            <option value="320x240">320×240 (Color)</option>
+                        </select>
+                    </div>
 
-        <label>Risoluzione
-      <select id="resolution">
-        <option value="128x112">128×112</option>
-        <option value="256x224">256×224</option>
-        <option value="512x448">512×448</option>
-      </select>
-    </label>
+                    <!-- Pixel Scale -->
+                    <div class="setting-group">
+                        <label>Scala Pixel: <span id="pixelValue">2x</span></label>
+                        <input type="range" id="pixelScale" min="1" max="4" value="2" class="slider">
+                    </div>
 
-        <label>Contrasto
-      <input type="range" id="contrast" min="0.5" max="2" step="0.1" value="1">
-    </label>
+                    <!-- Image Adjustments -->
+                    <div class="setting-group">
+                        <label>Contrasto: <span id="contrastValue">1.2</span></label>
+                        <input type="range" id="contrast" min="0.5" max="2" step="0.1" value="1.2" class="slider">
+                    </div>
 
-        <label>Luminosità
-      <input type="range" id="brightness" min="0.5" max="1.5" step="0.1" value="1">
-    </label>
+                    <div class="setting-group">
+                        <label>Luminosità: <span id="brightnessValue">1.0</span></label>
+                        <input type="range" id="brightness" min="0.5" max="1.5" step="0.1" value="1" class="slider">
+                    </div>
 
-        <label>Saturazione
-      <input type="range" id="saturation" min="0" max="2" step="0.1" value="1">
-    </label>
+                    <div class="setting-group">
+                        <label>Saturazione: <span id="saturationValue">0.8</span></label>
+                        <input type="range" id="saturation" min="0" max="2" step="0.1" value="0.8" class="slider">
+                    </div>
 
-        <label>Colore personalizzato:
-      <input type="color" id="customColor" value="#00ff00">
-    </label>
+                    <!-- Effects -->
+                    <div class="setting-group">
+                        <label>Effetti</label>
+                        <div class="effects-grid">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="vignette" checked>
+                                <span>Vignettatura</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="scanlines">
+                                <span>Scanlines</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="invert">
+                                <span>Inverti</span>
+                            </label>
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="noise">
+                                <span>Rumore</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <label><input type="checkbox" id="vignette"> Vignetta</label>
-        <label><input type="checkbox" id="scanlines"> Scanlines</label>
-        <label><input type="checkbox" id="invert"> Inverti colori</label>
+        <!-- Preview View -->
+        <div id="previewView" class="view-container">
+            <div class="preview-wrapper">
+                <canvas id="previewCanvas"></canvas>
+            </div>
+
+            <div class="preview-controls">
+                <button id="cancelBtn" class="btn-action btn-cancel">
+                    <span>✕</span>
+                    <span>Annulla</span>
+                </button>
+                <button id="saveBtn" class="btn-action btn-save">
+                    <span>✓</span>
+                    <span>Salva</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="script.js"></script>
